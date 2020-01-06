@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <title>AR App Demo</title>
+</head>
+<body>
+    <a-scene>
+        <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+        <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+        <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+        <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+        <a-sky color="#000"></a-sky>
+        <a-camera id="aframeCamera"></a-camera>
+    </a-scene>
+
+    <script>
+        // Get A-FRAME camera element from DOM
+        const camera = document.getElementById('aframeCamera');
+
+        // If the protocol of the webpage is https, use wss
+        let protocol = (window.location.protocol === 'https')? 'ws:/' : 'wss:/';
+
+        // Hostname of the glasses
+        const server = `glasses.local`;
+
+        // Establish the connection to the server
+        const ws = new WebSocket(`${protocol}/${server}/`);
+
+        // When the WebSocket is opened, log the message
+        ws.onOpen = () => console.log(`Connected to the WS server (${server}`);
+
+        // When message is received, 
+        // update A-FRAME's camera rotation
+        ws.onMessage = (msg) => {
+            const values = msg.data.values;
+            camera.object3D.setRotation(values[0], values[1], values[2]);
+        };
+
+        // When the connection to the server is closed, log message
+        ws.onClose = () => console.log(`Connection to the WS server ${server} was closed.`);
+    </script>
+</body>
+</html>

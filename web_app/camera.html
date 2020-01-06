@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Get Camera</title>
+</head>
+<body>
+    <video id="videoStream"></video>
+
+    <script>
+        const video = document.getElementById('videoStream');
+
+        const props = { 
+            audio: true, 
+            video: {
+                width: 1024, 
+                height: 768,
+                facingMode: { 
+                    exact: "environment" 
+                }
+            }
+        };
+
+        navigator.mediaDevices.getUserMedia(props).then(stream => {
+            video.srcObject = stream;
+            video.onloaddedmetadata = () => video.play();
+        }).catch(error => console.error(error));
+    </script>
+</body>
+</html>
